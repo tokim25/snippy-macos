@@ -55,6 +55,10 @@ An expansion isn't limited to plain text. Supported tokens:
 
 A global hotkey (⌥Space by default, changeable in Settings → Quick Search → **Change…**) opens a floating search box — find a snippet by name and insert it directly, no trigger required. Arrow keys navigate, Return inserts, Escape dismisses.
 
+## Pause/Resume
+
+Click the menu bar icon → **Pause Expansion** to stop all matching temporarily — useful right before typing a password or anything you don't want a stray trigger touching. The menu bar icon itself switches to a pause glyph while paused, and resets automatically on relaunch rather than staying paused across restarts.
+
 ## Distribution
 
 ```
@@ -75,5 +79,6 @@ The app icon is a plain SVG (`Resources/AppIcon.svg`), rasterized to every requi
 - **Phase 5** — smart case matching, app-specific snippets, Cmd+Z undo. Done.
 - **Phase 6** — Quick Search palette with a user-configurable hotkey. Done.
 - **Distribution polish** — custom app icon, versioned DMG packaging. Done. Notarization deliberately deferred.
+- **Phase 7** — pause/resume expansion. Done.
 
 There's also a hidden easter egg — not documented in the app itself on purpose.

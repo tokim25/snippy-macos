@@ -1,14 +1,17 @@
 import AppKit
+import Combine
 
 /// Buffers recently typed characters and fires an expansion when the buffer
 /// ends with a known trigger at a word boundary.
 final class ExpansionEngine {
     private let store: SnippetStore
     private let injector: TextInjector
+    private let pauseController: PauseController
     private let fillPanel = FillFieldsPanelController()
     private let confetti = ConfettiOverlayController()
     private var buffer: String = ""
     private let bufferCap = 40
+    private var pauseCancellable: AnyCancellable?
 
     /// Not a real snippet — never shown in Manage Snippets, never saved,
     /// stays hidden. Deletes itself and shows confetti; nothing is typed.
@@ -25,13 +28,19 @@ final class ExpansionEngine {
     private let escapeKeyCode: UInt16 = 53
     private let zKeyCode: UInt16 = 6
 
-    init(store: SnippetStore, injector: TextInjector) {
+    init(store: SnippetStore, injector: TextInjector, pauseController: PauseController) {
         self.store = store
         self.injector = injector
+        self.pauseController = pauseController
+
+        pauseCancellable = pauseController.$isPaused
+            .filter { $0 }
+            .sink { [weak self] _ in self?.buffer = "" }
     }
 
     func handle(_ event: NSEvent) {
         guard event.type == .keyDown else { return }
+        guard !pauseController.isPaused else { return }
 
         if isUndoCombo(event), let trigger = pendingUndoTrigger {
             pendingUndoTrigger = nil

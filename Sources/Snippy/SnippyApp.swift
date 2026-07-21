@@ -5,6 +5,7 @@ struct SnippyApp: App {
     @StateObject private var store: SnippetStore
     @StateObject private var permissions: PermissionManager
     @StateObject private var hotkeyManager: HotkeyManager
+    @StateObject private var pauseController: PauseController
 
     private let eventMonitor = EventMonitor()
     private let engine: ExpansionEngine
@@ -14,19 +15,22 @@ struct SnippyApp: App {
         let store = SnippetStore()
         let permissions = PermissionManager()
         let hotkeyManager = HotkeyManager()
+        let pauseController = PauseController()
         _store = StateObject(wrappedValue: store)
         _permissions = StateObject(wrappedValue: permissions)
         _hotkeyManager = StateObject(wrappedValue: hotkeyManager)
-        engine = ExpansionEngine(store: store, injector: TextInjector())
+        _pauseController = StateObject(wrappedValue: pauseController)
+        engine = ExpansionEngine(store: store, injector: TextInjector(), pauseController: pauseController)
         quickSearch = QuickSearchController(store: store, injector: TextInjector())
     }
 
     var body: some Scene {
-        MenuBarExtra("Snippy", systemImage: "keyboard") {
+        MenuBarExtra {
             MenuBarContentView()
                 .environmentObject(store)
                 .environmentObject(permissions)
                 .environmentObject(hotkeyManager)
+                .environmentObject(pauseController)
                 .onAppear {
                     permissions.startPolling()
                     if permissions.isTrusted {
@@ -40,6 +44,8 @@ struct SnippyApp: App {
                         eventMonitor.stop()
                     }
                 }
+        } label: {
+            Image(systemName: pauseController.isPaused ? "pause.circle" : "keyboard")
         }
         .menuBarExtraStyle(.window)
 
