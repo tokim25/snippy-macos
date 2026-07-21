@@ -55,6 +55,17 @@ An expansion isn't limited to plain text. Supported tokens:
 
 A global hotkey (⌥Space by default, changeable in Settings → Quick Search → **Change…**) opens a floating search box — find a snippet by name and insert it directly, no trigger required. Arrow keys navigate, Return inserts, Escape dismisses.
 
+## Distribution
+
+```
+./scripts/make_dmg.sh          # builds a release .app and packages Snippy-<version>.dmg
+./scripts/make_icon.sh         # re-renders Resources/AppIcon.icns from Resources/AppIcon.svg
+```
+
+The app icon is a plain SVG (`Resources/AppIcon.svg`), rasterized to every required size with a small Swift script and assembled with macOS's built-in `iconutil` — no external tools. The DMG is a plain `hdiutil` package (the app plus an `/Applications` symlink for drag-to-install); a fancier version with custom icon positions and window styling via AppleScript kept hitting an Automation permission wall in this environment, so it was dropped in favor of something that reliably works.
+
+**Not notarized.** That needs Apple's paid Developer Program ($99/year) for a Developer ID Application certificate — a deliberate call to skip for now. Snippy runs fine on this Mac (signed with the local "Snippy Development" cert), but Gatekeeper will likely block or warn on any other Mac until it's notarized with a real Developer ID.
+
 ## Where things stand
 
 - **Phase 1** — expansion engine, permission onboarding, local JSON storage. Done.
@@ -63,5 +74,6 @@ A global hotkey (⌥Space by default, changeable in Settings → Quick Search �
 - **Phase 4** — dynamic tokens: date/time, clipboard, cursor placement, prompted fill-ins. Done.
 - **Phase 5** — smart case matching, app-specific snippets, Cmd+Z undo. Done.
 - **Phase 6** — Quick Search palette with a user-configurable hotkey. Done.
+- **Distribution polish** — custom app icon, versioned DMG packaging. Done. Notarization deliberately deferred.
 
 There's also a hidden easter egg — not documented in the app itself on purpose.

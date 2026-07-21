@@ -1,0 +1,25 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2FA08D"/>
+      <stop offset="100%" stop-color="#123A32"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" rx="224" fill="url(#bg)"/>
+
+  <!-- trigger chip: three dots standing in for a typed abbreviation -->
+  <rect x="150" y="452" width="230" height="120" rx="60" fill="#0E3830"/>
+  <circle cx="215" cy="512" r="15" fill="#5FE0C6"/>
+  <circle cx="265" cy="512" r="15" fill="#5FE0C6"/>
+  <circle cx="315" cy="512" r="15" fill="#5FE0C6"/>
+
+  <!-- arrow -->
+  <path d="M 410 512 L 545 512 M 500 460 L 555 512 L 500 564"
+        stroke="#F2F0EA" stroke-width="28" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+  <!-- expansion chip: full text lines standing in for the expanded snippet -->
+  <rect x="600" y="410" width="300" height="204" rx="42" fill="#E8954A"/>
+  <rect x="640" y="462" width="220" height="22" rx="11" fill="#3A2410"/>
+  <rect x="640" y="508" width="160" height="22" rx="11" fill="#3A2410"/>
+  <rect x="640" y="554" width="195" height="22" rx="11" fill="#3A2410"/>
+</svg>
