@@ -36,8 +36,18 @@ Click the keyboard icon in the menu bar → **Grant Accessibility Access**. Snip
 
 Snippets live at `~/Library/Mobile Documents/com~apple~CloudDocs/Snippy/snippets.json` — plain iCloud Drive, no Apple Developer account or entitlements needed since Snippy isn't sandboxed. A directory watcher reloads the store whenever that file changes underneath the running app, whether from iCloud syncing down a change from another Mac or from Snippy's own save. If iCloud Drive isn't available, it falls back to local-only storage under Application Support.
 
+## Dynamic tokens
+
+An expansion isn't limited to plain text. Supported tokens:
+
+- `{date}` / `{time}` — current date/time at expansion.
+- `{clipboard}` — whatever's currently on the clipboard.
+- `{cursor}` — where the caret lands after expanding (e.g. `Hi {cursor},` leaves the cursor right after "Hi ").
+- `{fill:Label}` — pauses expansion and shows a small panel prompting for a value first. The same label used twice fills both spots with the same answer.
+
 ## Where things stand
 
 - **Phase 1** — expansion engine, permission onboarding, local JSON storage. Done.
 - **Phase 2** — menu bar UI: add/edit/delete snippets grouped by folder, settings tab with launch-at-login. Done.
 - **Phase 3** — sync across Macs via iCloud Drive. Done.
+- **Phase 4** — dynamic tokens: date/time, clipboard, cursor placement, prompted fill-ins. Done.

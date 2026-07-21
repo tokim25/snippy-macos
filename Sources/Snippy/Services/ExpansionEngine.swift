@@ -5,6 +5,7 @@ import AppKit
 final class ExpansionEngine {
     private let store: SnippetStore
     private let injector: TextInjector
+    private let fillPanel = FillFieldsPanelController()
     private var buffer: String = ""
     private let bufferCap = 40
 
@@ -53,6 +54,27 @@ final class ExpansionEngine {
         guard isWordBoundary else { return }
 
         buffer = ""
-        injector.expand(trigger: match.trigger, into: match.expansion)
+        perform(match)
+    }
+
+    private func perform(_ snippet: Snippet) {
+        let template = SnippetTemplate(snippet.expansion)
+        let fieldNames = template.fillFieldNames
+
+        guard !fieldNames.isEmpty else {
+            inject(trigger: snippet.trigger, template: template, fillValues: [:])
+            return
+        }
+
+        fillPanel.present(fieldNames: fieldNames) { [weak self] values in
+            guard let self, let values else { return }
+            self.inject(trigger: snippet.trigger, template: template, fillValues: values)
+        }
+    }
+
+    private func inject(trigger: String, template: SnippetTemplate, fillValues: [String: String]) {
+        let clipboard = NSPasteboard.general.string(forType: .string)
+        let rendered = template.render(fillValues: fillValues, clipboard: clipboard)
+        injector.expand(trigger: trigger, into: rendered.text, cursorOffsetFromEnd: rendered.cursorOffsetFromEnd)
     }
 }

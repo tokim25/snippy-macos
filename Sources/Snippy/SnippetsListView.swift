@@ -43,31 +43,31 @@ struct SnippetsListView: View {
 
             Divider()
 
-            HStack(spacing: 0) {
-                Spacer().frame(width: 6)
-
-                FooterGlyphButton(systemImage: "plus", isEnabled: true, help: "Add a snippet") {
-                    isAddingNew = true
-                }
-
-                Divider().frame(height: 12)
-
-                FooterGlyphButton(systemImage: "minus", isEnabled: selection != nil, help: "Remove the selected snippet") {
-                    removeSelected()
+            HStack(spacing: 8) {
+                HStack(spacing: 6) {
+                    FooterGlyphButton(systemImage: "plus", isEnabled: true, help: "Add a snippet") {
+                        isAddingNew = true
+                    }
+                    FooterGlyphButton(systemImage: "minus", isEnabled: selection != nil, help: "Remove the selected snippet") {
+                        removeSelected()
+                    }
                 }
 
                 Spacer()
 
                 if let selection, let selected = store.snippets.first(where: { $0.id == selection }) {
                     Text("Edit…")
-                        .font(.callout)
-                        .foregroundStyle(.secondary)
-                        .padding(.trailing, 10)
+                        .font(.callout.weight(.medium))
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 4)
+                        .background(RoundedRectangle(cornerRadius: 5).fill(Color.secondary.opacity(0.15)))
+                        .overlay(RoundedRectangle(cornerRadius: 5).strokeBorder(Color.secondary.opacity(0.3)))
                         .contentShape(Rectangle())
                         .onTapGesture { editingSnippet = selected }
                 }
             }
-            .frame(height: 22)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
             .background(.bar)
         }
         .sheet(item: $editingSnippet) { snippet in
@@ -85,9 +85,10 @@ struct SnippetsListView: View {
     }
 }
 
-/// A flat, glyph-only tap target with no button chrome — matches the native
-/// +/- footer used by System Settings' own permission lists, which a plain
-/// SwiftUI `Button` (even `.borderless`) no longer renders as on macOS 26.
+/// A visibly-bordered glyph button — deliberately more prominent than the
+/// native System-Settings-style +/- footer, since a flat hover-only glyph
+/// turned out too easy to miss. Function over form here: always-on
+/// background and border so it reads as a button at rest, not just on hover.
 private struct FooterGlyphButton: View {
     let systemImage: String
     let isEnabled: Bool
@@ -96,12 +97,18 @@ private struct FooterGlyphButton: View {
 
     @State private var isHovering = false
 
+    private var fillOpacity: Double {
+        guard isEnabled else { return 0.06 }
+        return isHovering ? 0.35 : 0.18
+    }
+
     var body: some View {
         Image(systemName: systemImage)
-            .font(.system(size: 11, weight: .medium))
+            .font(.system(size: 13, weight: .semibold))
             .foregroundStyle(isEnabled ? Color.primary : Color.secondary.opacity(0.35))
-            .frame(width: 22, height: 20)
-            .background(isHovering && isEnabled ? Color.secondary.opacity(0.15) : Color.clear)
+            .frame(width: 28, height: 24)
+            .background(RoundedRectangle(cornerRadius: 5).fill(Color.secondary.opacity(fillOpacity)))
+            .overlay(RoundedRectangle(cornerRadius: 5).strokeBorder(Color.secondary.opacity(isEnabled ? 0.4 : 0.15)))
             .contentShape(Rectangle())
             .onHover { isHovering = $0 }
             .onTapGesture { if isEnabled { action() } }

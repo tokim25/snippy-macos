@@ -31,6 +31,9 @@ struct SnippetEditorView: View {
                     .font(.body)
                     .frame(height: 90)
                     .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.secondary.opacity(0.3)))
+                Text("Tokens: {date}  {time}  {clipboard}  {cursor}  {fill:Label}")
+                    .font(.system(.caption2, design: .monospaced))
+                    .foregroundStyle(.secondary)
             }
 
             VStack(alignment: .leading, spacing: 4) {

@@ -7,10 +7,27 @@ import CoreGraphics
 final class TextInjector {
     private let deleteKeyCode: CGKeyCode = 0x33
     private let vKeyCode: CGKeyCode = 0x09
+    private let leftArrowKeyCode: CGKeyCode = 0x7B
 
-    func expand(trigger: String, into expansion: String) {
+    func expand(trigger: String, into expansion: String, cursorOffsetFromEnd: Int? = nil) {
         deleteCharacters(count: trigger.count)
         pasteText(expansion)
+
+        if let cursorOffsetFromEnd, cursorOffsetFromEnd > 0 {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { [weak self] in
+                self?.moveCursorLeft(count: cursorOffsetFromEnd)
+            }
+        }
+    }
+
+    private func moveCursorLeft(count: Int) {
+        let source = CGEventSource(stateID: .hidSystemState)
+        for _ in 0..<count {
+            CGEvent(keyboardEventSource: source, virtualKey: leftArrowKeyCode, keyDown: true)?
+                .post(tap: .cghidEventTap)
+            CGEvent(keyboardEventSource: source, virtualKey: leftArrowKeyCode, keyDown: false)?
+                .post(tap: .cghidEventTap)
+        }
     }
 
     private func deleteCharacters(count: Int) {
