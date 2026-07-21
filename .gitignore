@@ -2,4 +2,6 @@
 .swiftpm/
 *.xcodeproj
 Snippy.app/
+dist/
+*.dmg
 .DS_Store
