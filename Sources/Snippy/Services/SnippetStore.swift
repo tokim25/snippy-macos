@@ -52,20 +52,21 @@ final class SnippetStore: ObservableObject {
         lastSyncedAt = modificationDate()
     }
 
-    func add(trigger: String, expansion: String, folder: String?) throws {
+    func add(trigger: String, expansion: String, folder: String?, restrictedApps: [RestrictedApp] = []) throws {
         let cleanTrigger = trigger.trimmingCharacters(in: .whitespacesAndNewlines)
         try validate(trigger: cleanTrigger, excluding: nil)
-        snippets.append(Snippet(trigger: cleanTrigger, expansion: expansion, folder: normalized(folder)))
+        snippets.append(Snippet(trigger: cleanTrigger, expansion: expansion, folder: normalized(folder), restrictedApps: restrictedApps))
         save()
     }
 
-    func update(_ snippet: Snippet, trigger: String, expansion: String, folder: String?) throws {
+    func update(_ snippet: Snippet, trigger: String, expansion: String, folder: String?, restrictedApps: [RestrictedApp]) throws {
         let cleanTrigger = trigger.trimmingCharacters(in: .whitespacesAndNewlines)
         try validate(trigger: cleanTrigger, excluding: snippet.id)
         guard let idx = snippets.firstIndex(where: { $0.id == snippet.id }) else { return }
         snippets[idx].trigger = cleanTrigger
         snippets[idx].expansion = expansion
         snippets[idx].folder = normalized(folder)
+        snippets[idx].restrictedApps = restrictedApps
         snippets[idx].updatedAt = Date()
         save()
     }
@@ -117,9 +118,13 @@ final class SnippetStore: ObservableObject {
         return trimmed
     }
 
+    /// Case-insensitive, since matching itself is now case-insensitive
+    /// (smart-case expansion) — ";Addr" and ";addr" would otherwise collide.
     private func validate(trigger: String, excluding id: UUID?) throws {
         guard !trigger.isEmpty else { throw SnippetStoreError.emptyTrigger }
-        let isDuplicate = snippets.contains { $0.trigger == trigger && $0.id != id }
+        let isDuplicate = snippets.contains {
+            $0.trigger.caseInsensitiveCompare(trigger) == .orderedSame && $0.id != id
+        }
         if isDuplicate { throw SnippetStoreError.duplicateTrigger }
     }
 

@@ -3,6 +3,7 @@ import SwiftUI
 struct SettingsView: View {
     @EnvironmentObject private var permissions: PermissionManager
     @EnvironmentObject private var store: SnippetStore
+    @EnvironmentObject private var hotkeyManager: HotkeyManager
     @StateObject private var loginItem = LoginItemManager()
 
     private static let syncedAtFormatter: DateFormatter = {
@@ -40,6 +41,13 @@ struct SettingsView: View {
                         permissions.openAccessibilitySettings()
                     }
                 }
+            }
+
+            Section("Quick Search") {
+                HotkeyRecorderView(hotkeyManager: hotkeyManager)
+                Text("Opens a search box to find and insert any snippet by name.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
 
             Section("Startup") {

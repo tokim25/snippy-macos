@@ -9,6 +9,20 @@ final class TextInjector {
     private let vKeyCode: CGKeyCode = 0x09
     private let leftArrowKeyCode: CGKeyCode = 0x7B
 
+    /// Retypes literal text (e.g. restoring a trigger after Cmd+Z) via the
+    /// same paste mechanism as `expand` — reusing it means this can't create
+    /// a feedback loop through our own keystroke monitor the way per-character
+    /// synthetic typing would.
+    func retype(_ text: String) {
+        pasteText(text)
+    }
+
+    /// Deletes typed characters without inserting anything — e.g. removing
+    /// a hidden trigger that has no expansion text of its own.
+    func deleteOnly(count: Int) {
+        deleteCharacters(count: count)
+    }
+
     func expand(trigger: String, into expansion: String, cursorOffsetFromEnd: Int? = nil) {
         deleteCharacters(count: trigger.count)
         pasteText(expansion)

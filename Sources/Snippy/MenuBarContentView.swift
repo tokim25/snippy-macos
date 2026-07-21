@@ -4,6 +4,7 @@ import AppKit
 struct MenuBarContentView: View {
     @EnvironmentObject private var store: SnippetStore
     @EnvironmentObject private var permissions: PermissionManager
+    @EnvironmentObject private var hotkeyManager: HotkeyManager
     @Environment(\.openWindow) private var openWindow
 
     var body: some View {
@@ -36,6 +37,10 @@ struct MenuBarContentView: View {
                 openWindow(id: "manage")
                 NSApp.activate(ignoringOtherApps: true)
             }
+
+            Text("Quick Search: \(hotkeyManager.displayString)")
+                .font(.caption)
+                .foregroundStyle(.secondary)
 
             Divider()
 
